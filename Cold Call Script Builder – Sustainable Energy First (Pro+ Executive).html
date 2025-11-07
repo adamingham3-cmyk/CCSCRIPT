@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Cold Call Script Builder – Sustainable Energy First (Pro+ Executive)</title>
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--text:#e2e8f0;--muted:#94a3b8;--border:#334155;--accent:#22d3ee;--warn:#f87171;--ok:#10b981}
+body.light{--bg:#f8fafc;--card:#fff;--text:#0f172a;--muted:#64748b;--border:#e2e8f0;--accent:#0ea5e9;--warn:#b91c1c;--ok:#059669}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial;transition:background .25s,color .25s}
+header{position:sticky;top:0;z-index:10;background:var(--card);border-bottom:1px solid var(--border)}
+.head{max-width:1200px;margin:0 auto;padding:10px 14px;display:flex;align-items:center;gap:10px;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px}
+.brand img{height:36px;border-radius:6px}
+.title{font-weight:700}
+.pill{font-size:12px;border:1px solid var(--border);border-radius:999px;padding:4px 8px;background:color-mix(in srgb,var(--warn) 25%, var(--card) 75%)}
+.toolbar{background:var(--card);border-bottom:1px solid var(--border)}
+.toolbar-inner{max-width:1200px;margin:0 auto;padding:8px 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center}
+.btn{background:transparent;border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:8px;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn.small{padding:4px 8px;font-size:12px}
+select,input[type="text"],input[type="color"]{background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:6px}
+main{max-width:1200px;margin:16px auto;display:grid;grid-template-columns:1fr 330px;gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px}
+h2{font-size:16px;margin:12px 0 8px;border-bottom:1px solid var(--border);padding-bottom:6px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+[contenteditable]{outline:none;min-height:56px;padding:6px;border:1px dashed transparent;border-radius:8px}
+[contenteditable]:focus{border-color:var(--accent)}
+.muted{color:var(--muted);font-size:12px}
+.hidden{display:none}
+.section{border:1px solid var(--border);border-radius:12px;padding:10px;margin-bottom:10px}
+.section-head{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.save{font-size:12px;color:var(--muted);transition:transform .25s,color .25s}
+.save.active{color:var(--ok);transform:scale(1.08)}
+aside details{margin-bottom:10px}
+aside summary{cursor:pointer;font-weight:600}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+footer{text-align:center;color:var(--muted);font-size:12px;margin:16px 0}
+@media(max-width:1024px){main{grid-template-columns:1fr}}
+/* formatting bar */
+.formatbar{position:sticky;top:48px;z-index:5;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:6px;display:flex;gap:6px;align-items:center;margin:6px 0}
+.formatbar .btn{padding:4px 8px}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand">
+      <img id="logo" src="sustainable_energy_first_logo.png" alt="Sustainable Energy First logo">
+      <div class="title">📞 Cold Call Script Builder</div>
+    </div>
+    <div class="row">
+      <button class="btn small" id="btnTheme">🌙</button>
+      <span class="pill" title="All calls are recorded for training and monitoring purposes.">⚠️ Remember GDPR</span>
+    </div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="toolbar-inner">
+    <select id="sectorSelect" title="Select sector"></select>
+    <button class="btn small" id="btnEditSectorIntro">Edit Sector Intro</button>
+    <button class="btn small" id="btnAddSector">+ Sector</button>
+    <button class="btn small" id="btnRenameSector">Rename</button>
+    <button class="btn small" id="btnDeleteSector">Delete</button>
+
+    <span class="pill">Rep: Adam</span>
+    <span class="pill">Company: Sustainable Energy First</span>
+
+    <select id="contextSelect" title="Call context"></select>
+    <button class="btn small" id="btnAddContext">+ Context</button>
+    <button class="btn small" id="btnRenameContext">Rename</button>
+    <button class="btn small" id="btnDeleteContext">Delete</button>
+
+    <button class="btn" id="btnPreview">Preview</button>
+    <button class="btn" id="btnCopy">Copy</button>
+    <button class="btn" id="btnDownload">Download</button>
+    <button class="btn" id="btnPrint">Print</button>
+    <button class="btn" id="btnExport">Export</button>
+    <button class="btn" id="btnImport">Import</button>
+    <span id="saveStatus" class="save">Saved</span>
+  </div>
+</div>
+
+<main>
+  <section class="card">
+    <h2 id="contextTitle">👋 Decision Maker Intro</h2>
+    <div id="contextIntro" contenteditable="true"></div>
+
+    <!-- Formatting bar -->
+    <div class="formatbar" aria-label="Formatting">
+      <button class="btn small" id="fmtBold" title="Bold (Ctrl/Cmd+B)">B</button>
+      <button class="btn small" id="fmtItalic" title="Italic (Ctrl/Cmd+I)">/</button>
+      <button class="btn small" id="fmtUnderline" title="Underline (Ctrl/Cmd+U)">U</button>
+      <button class="btn small" id="fmtUL" title="Bulleted list">• List</button>
+      <button class="btn small" id="fmtOL" title="Numbered list">1. List</button>
+    </div>
+
+    <h2>🧩 Script Sections</h2>
+    <div id="sections"></div>
+    <pre id="preview" class="hidden"></pre>
+  </section>
+
+  <aside class="card">
+    <details open>
+      <summary>Manage Sections</summary>
+      <div class="row" style="margin:8px 0">
+        <button class="btn small" id="btnAddSection">+ Add Section</button>
+      </div>
+      <div id="sectionManager"></div>
+    </details>
+
+    <details>
+      <summary>Branding</summary>
+      <div class="row" style="margin-top:8px">
+        <label class="muted">Accent</label>
+        <input type="color" id="accentPicker">
+      </div>
+    </details>
+  </aside>
+</main>
+
+<footer>
+  Cold Call Script Builder – Sustainable Energy First (Pro+ Executive) · v3.0 · © 2025 Sustainable Energy First
+</footer>
+
+<script>
+/* ========= Utils & Persistence ========= */
+const LS_KEY="cc_sef_pro_exec_v30";
+const $=id=>document.getElementById(id);
+const uid=()=>Math.random().toString(36).slice(2,9);
+function pulse(){const el=$("saveStatus");el.textContent="Saving…";el.classList.add("active");clearTimeout(pulse.t);pulse.t=setTimeout(()=>{el.textContent="Saved";el.classList.remove("active")},600)}
+function save(){localStorage.setItem(LS_KEY,JSON.stringify(state));pulse()}
+function load(){try{return JSON.parse(localStorage.getItem(LS_KEY)||"")}catch{return null}}
+function replaceFields(s,f){let out=String(s||"");for(const[k,v]of Object.entries(f)){out=out.replace(new RegExp("\\{\\{\\s*"+k.replace(/[.*+?^${}()|[\\]\\\\]/g,"\\$&")+"\\s*\\}\\}","gi"),v||"")}return out}
+
+/* ========= Defaults (pre-filled from your pitch) ========= */
+const DEFAULT_SECTOR_ORDER = [
+  "Care Homes (NCA)",
+  "Printers (BPIF)",
+  "Hospitality (UK Hospitality)",
+  "Food Manufacturers (FDF)",
+  "Healthcare Providers"
+];
+
+const DEFAULT_SECTORS = {
+  "Care Homes (NCA)": "We help care providers reduce energy costs and improve sustainability compliance across sites.",
+  "Printers (BPIF)": "We help commercial printers control high process loads and lock in dips ahead of renewal.",
+  "Hospitality (UK Hospitality)": "We help hotel & restaurant groups cut costs and centralise multi-site reporting.",
+  "Food Manufacturers (FDF)": "We help food & drink plants balance cost certainty with rising non-commodity charges.",
+  "Healthcare Providers": "We help NHS trusts & private providers improve compliance and reduce spend across estates."
+};
+
+const DEFAULT_CONTEXT = {
+  order:["Decision Maker Known","Decision Maker Unknown"],
+  selected:"Decision Maker Known",
+  texts:{
+    "Decision Maker Known":"Hi {{contactName}}, it’s Adam from Sustainable Energy First. I know you weren’t expecting my call — if you don’t mind, I’ll take 30 seconds to explain why I’m calling and you can tell me if it’s relevant to {{companyName}}?",
+    "Decision Maker Unknown":"Good {{morning/afternoon}}, it’s Adam from Sustainable Energy First. Could you point me to the person who looks after energy / electricity contracts at {{companyName}}?"
+  }
+};
+
+const DEFAULT_OPENER_TEMPLATE =
+  "{{intro}}\nHi {{contactName}}, this is Adam from {{companyName}}. Do you have 27 seconds for me to explain why I’m calling?";
+
+const DEFAULT_SECTIONS = [
+  {id:uid(),title:"🧩 Sector Opener",role:"opener",html:""},
+  {id:uid(),title:"🧱 Objection Handling",html:"<p>Handle quickly, stay light and curious; re-ask for <em>15–30 seconds</em> if needed.</p><ul><li><b>Not interested.</b><br>“Totally get it. Is that because you dislike cold calls, or my Burnley accent? (…smile) Give me <b>15 seconds</b> to tell you why this call is different?”</li><li><b>We’re fine / sorted.</b><br>“That’s great. If I told you that’s the best thing to say to a broker, would you believe me? When was your last <b>free health check</b> on all meters/sites? My goal is to make sure you remain fine.”</li><li><b>We deal direct with suppliers.</b><br>“Understood. Direct often means a generic renewal and no dedicated support. We give <b>direct account-manager lines</b> for billing / supply issues. Do you have that today?”</li><li><b>We already use a broker.</b><br>“Perfect — you already see the value. We act as <b>consultants</b>, not just brokers. How would you rate them out of 10? Besides price, what services do they provide? Do they help manage <b>EII & RAB</b> levies?”</li><li><b>Not a good time.</b><br>“No problem — I won’t call back unannounced. What works for a 5-minute chat: <b>Thu morning</b> or <b>later this afternoon</b>?”</li><li><b>We’ll wait / watching the market.</b><br>“Totally hear you. Prices can go <em>up like a rocket, down like a feather</em>. If we start now, we can capture dips and give budget security. Happy for me to send an <b>LOA</b> so we’re ready to move at the right moment?”</li></ul>"},
+  {id:uid(),title:"⭐ Sign Point / Credibility",html:"<p><b>Sustainable Energy First</b> — the UK’s oldest independent energy consultant — helps manage roughly <b>11% of UK commercial energy</b>. I focus on SMEs and I’m calling to gather a few details to see if we’re a fit — nothing heavy, just a <b>quick health check</b>.</p>"},
+  {id:uid(),title:"❓ Need / Fact-Find",html:"<p>Starter: “When you’re buying, what’s most important — <b>price</b>, <b>quality of service</b>, or <b>both</b>?”</p><p>2/3 of bills are <b>non-energy costs</b> (levies, taxes, network). I’ll keep this short:</p><ul><li>When do your <b>electric / gas</b> contracts renew?</li><li>Current <b>supplier</b> and <b>term</b>?</li><li>Your <b>renewal strategy</b> — what do you look at to decide?</li><li>What do you <b>like / dislike</b> about the current setup? What would you change?</li><li>Views on <b>price volatility</b> and managing risk?</li><li><b>Sustainability</b>: targets in place? Considering <b>solar / PPAs</b>?</li></ul>"},
+  {id:uid(),title:"💬 Summarize & Offer Hope",html:"<p>“Thanks — to confirm, I heard <b>[point 1]</b> and <b>[point 2]</b>. The good news is many customers are now coming off higher rates onto lower ones. I’ve personally delivered reductions this week.”</p>"},
+  {id:uid(),title:"🤝 Commit / Next Step",html:"<p>“If I can put a strategy in place and provide competitive quotes, would you consider doing business with us?”</p><p>“To do that I’ll run a <b>free health check</b>. If I send an <b>LOA</b> now, my team will gather MPAN/MPR data. Shall we get the ball rolling?”</p>"},
+  {id:uid(),title:"📈 Proof of Value / Close",html:"<p>We’re not just a broker — we’re a <b>consultant</b>. You get:</p><ul><li><b>Negotiated rates</b> from ~15 suppliers with SME purchasing power.</li><li><b>Full account management</b>: direct lines to fix billing, supply or DD issues.</li><li><b>Risk mitigation</b>: rollover protection, staggered start/end dates, market advice during dips.</li><li><b>Renewal vs Broker</b>: suppliers push generic one-fix renewals; we tailor strategy.</li><li><b>NECs</b>: insight into EII & RAB levies and the 60–65% non-energy share of bills.</li></ul><p>Close: “I’ll email the LOA now. When will you be making a decision? Let’s put a time in the diary so we can walk through quotes.”</p>"}
+];
+
+const DEFAULT_SECTOR_OPENERS = {
+  "Care Homes (NCA)":"<p><b>We help care providers</b> reduce energy costs and improve sustainability compliance across sites.</p><p>We’re partners of the <b>National Care Association</b>. I’ve been asked to reach out about managing energy more effectively across estates — including a free <b>health check</b> on all meters and sites.</p><ul><li>Are you getting <b>VAT exemptions</b> and necessary climate-change levy reliefs?</li><li>Awareness of the new <b>EII</b> & <b>RAB</b> government levies?</li><li><b>CQC</b> requirements and documentation in place?</li></ul><p>This isn’t to sell — I’d like to learn how you manage it now and see where we can help.</p>",
+  "Printers (BPIF)":"<p>We’re the UK’s oldest independent energy consultant and have partnered with the <b>BPIF</b> for nearly a decade, supporting commercial printers and labelers.</p><ul><li>High, process-driven loads — how are you procuring today?</li><li>Capturing market dips — starting <b>~18 months</b> ahead of renewal can really help.</li></ul><p>I’m keen to understand your approach and whether we’re a fit.</p>",
+  "Hospitality (UK Hospitality)":"<p>We partner with <b>UK Hospitality</b> and support groups like Britannia Hotels, Turtle Bay and Hard Rock Café.</p><p>We follow up with fellow members to check billing accuracy and ensure the contract structure matches actual trading patterns across sites. Happy to share what’s working.</p>",
+  "Food Manufacturers (FDF)":"<p>We work with members of the <b>Food & Drink Federation</b> and the Cold Chain Federation, with clients including major manufacturers.</p><ul><li>Balancing cost certainty with rising <b>non-commodity</b> charges.</li><li>Visibility across sites and production peaks.</li></ul><p>I’m not here to pitch — just to understand how you manage procurement and whether we’re a fit.</p>",
+  "Healthcare Providers":"<p>We consult and manage energy for ~<b>25% of NHS trusts</b> and several large private providers (e.g., Bupa, Care UK).</p><p>I’d like to understand how you manage procurement and reporting today — then I can share relevant benchmarks and options.</p>"
+};
+
+/* ========= State ========= */
+let state=load()||{
+  dark:null,
+  accent:"#22d3ee",
+  sectorOrder:[...DEFAULT_SECTOR_ORDER],
+  sectors:{...DEFAULT_SECTORS},
+  selectedSector:"Care Homes (NCA)",
+  context:JSON.parse(JSON.stringify(DEFAULT_CONTEXT)),
+  sections:JSON.parse(JSON.stringify(DEFAULT_SECTIONS)),
+  sectorOpeners:{...DEFAULT_SECTOR_OPENERS}
+};
+
+/* ========= Theme & Branding ========= */
+function sysDark(){return window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches}
+function applyTheme(d){document.body.classList.toggle("light",!d);$("btnTheme").textContent=d?"🌙":"☀️"}
+function initTheme(){if(state.dark===null)state.dark=sysDark();applyTheme(state.dark)}
+$("btnTheme").onclick=()=>{state.dark=!state.dark;applyTheme(state.dark);save()};
+document.documentElement.style.setProperty("--accent",state.accent);
+$("accentPicker").value=state.accent;
+$("accentPicker").oninput=e=>{state.accent=e.target.value;document.documentElement.style.setProperty("--accent",state.accent);save()};
+
+/* ========= Formatting ========= */
+let lastEditable=null;
+function rememberEditable(el){ lastEditable=el; }
+function exec(cmd){ if(!lastEditable) return; lastEditable.focus(); document.execCommand(cmd,false,null); setTimeout(()=>{ lastEditable.dispatchEvent(new Event("input")); },0); }
+$("fmtBold").onclick = ()=>exec("bold");
+$("fmtItalic").onclick = ()=>exec("italic");
+$("fmtUnderline").onclick = ()=>exec("underline");
+$("fmtUL").onclick = ()=>exec("insertUnorderedList");
+$("fmtOL").onclick = ()=>exec("insertOrderedList");
+
+/* ========= Rendering ========= */
+function renderSectors(){
+  const sel=$("sectorSelect"); sel.innerHTML="";
+  state.sectorOrder.forEach(n=>{const o=document.createElement("option");o.value=n;o.textContent=n;o.title=state.sectors[n]||"";sel.appendChild(o)});
+  if(!state.selectedSector || !state.sectorOrder.includes(state.selectedSector)) state.selectedSector=state.sectorOrder[0]||"";
+  sel.value=state.selectedSector;
+}
+
+function renderContext(){
+  const cs=$("contextSelect"); cs.innerHTML="";
+  state.context=state.context||{order:[],selected:"",texts:{}};
+  state.context.texts=state.context.texts||{};
+  state.context.order=Array.isArray(state.context.order)?state.context.order:Object.keys(state.context.texts);
+  Object.keys(state.context.texts).forEach(k=>{if(!state.context.order.includes(k))state.context.order.push(k)});
+  if(!state.context.selected || !state.context.order.includes(state.context.selected)) state.context.selected=state.context.order[0]||"";
+  state.context.order.forEach(n=>{const o=document.createElement("option");o.value=n;o.textContent=n;cs.appendChild(o)});
+  cs.value=state.context.selected;
+  $("contextTitle").textContent = cs.value.toLowerCase().includes("unknown") ? "👋 Decision Maker Unknown Intro" : "👋 Decision Maker Known Intro";
+  const ci=$("contextIntro");
+  ci.innerHTML=state.context.texts[state.context.selected]||"";
+  ci.onfocus=()=>rememberEditable(ci);
+  ci.oninput=e=>{state.context.texts[state.context.selected]=e.target.innerHTML;save()};
+}
+
+function isOpener(sec){ return sec.role==="opener" || /sector.*opener|permission.*opener/i.test(sec.title||""); }
+
+function makeSection(sec){
+  const wrap=document.createElement("div");wrap.className="section";
+  const head=document.createElement("div");head.className="section-head";
+  if(isOpener(sec) && sec.title!=="🧩 Sector Opener"){ sec.title="🧩 Sector Opener"; }
+  const ttl=document.createElement("div");ttl.textContent=sec.title;ttl.style.fontWeight="600";ttl.title="Double-click to rename";
+  ttl.ondblclick=()=>{const nv=prompt("Rename section:",sec.title);if(!nv)return;sec.title=nv; if(isOpener(sec)) sec.role="opener"; save(); renderSections(); renderManager()};
+  const up=mini("↑",()=>move(sec.id,-1)),down=mini("↓",()=>move(sec.id,1)),del=mini("🗑️",()=>{if(isOpener(sec)) return alert("Sector Opener is required."); if(confirm("Delete this section?")){state.sections=state.sections.filter(s=>s.id!==sec.id);save();renderSections();renderManager()}})
+  head.append(ttl,up,down,del);
+
+  const body=document.createElement("div");body.contentEditable="true";
+  if(isOpener(sec)){
+    body.innerHTML = state.sectorOpeners[state.selectedSector] || DEFAULT_OPENER_TEMPLATE;
+    body.oninput=()=>{ state.sectorOpeners[state.selectedSector]=body.innerHTML; save(); };
+  }else{
+    body.innerHTML=sec.html||"";
+    body.oninput=()=>{ sec.html=body.innerHTML; save(); };
+  }
+  body.onfocus=()=>rememberEditable(body);
+
+  wrap.append(head,body);
+  return wrap;
+}
+function renderSections(){const root=$("sections");root.innerHTML="";state.sections.forEach(s=>root.appendChild(makeSection(s)));renderManager()}
+function renderManager(){
+  const m=$("sectionManager");m.innerHTML="";
+  state.sections.forEach(sec=>{
+    const row=document.createElement("div");row.className="row";row.style.justifyContent="space-between";row.draggable=true;
+    const name=document.createElement("input");name.type="text";name.value=sec.title;name.style.flex="1";name.oninput=()=>{sec.title=name.value; if(isOpener(sec)) sec.role="opener"; save(); renderSections()};
+    row.addEventListener("dragstart",e=>{e.dataTransfer.setData("id",sec.id)});
+    row.addEventListener("dragover",e=>{e.preventDefault();row.style.outline=`1px dashed var(--accent)`});
+    row.addEventListener("dragleave",()=>row.style.outline="none");
+    row.addEventListener("drop",e=>{e.preventDefault();row.style.outline="none";const from=e.dataTransfer.getData("id");reorder(from,sec.id)});
+    row.append(name,mini("↑",()=>move(sec.id,-1)),mini("↓",()=>move(sec.id,1)));m.appendChild(row)
+  })
+}
+
+/* ========= Helpers ========= */
+function mini(t,fn){const b=document.createElement("button");b.className="btn small";b.textContent=t;b.onclick=fn;return b}
+function move(id,delta){const a=state.sections,i=a.findIndex(s=>s.id===id),j=i+delta;if(i<0||j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];save();renderSections();renderManager()}
+function reorder(fromId,toId){const a=state.sections;const i=a.findIndex(s=>s.id===fromId),j=a.findIndex(s=>s.id===toId);if(i<0||j<0||i===j)return;const [it]=a.splice(i,1);a.splice(j,0,it);save();renderSections();renderManager()}
+function mergedText(){
+  const f={contactName:"",companyName:"Sustainable Energy First",repName:"Adam",intro:state.sectors[state.selectedSector]||""};
+  let out=replaceFields(state.context.texts[state.context.selected]||"",f)+"\n\n";
+  state.sections.forEach(sec=>{
+    let html = sec.html||"";
+    if(isOpener(sec)){ html = state.sectorOpeners[state.selectedSector] || DEFAULT_OPENER_TEMPLATE; }
+    const d=document.createElement("div"); d.innerHTML=replaceFields(html,f);
+    out += (sec.title||"") + "\n" + d.innerText + "\n\n";
+  });
+  return out.trim();
+}
+
+/* ========= Events ========= */
+$("sectorSelect").onchange=e=>{
+  state.selectedSector=e.target.value; save(); renderSections();
+  if(!$("preview").classList.contains("hidden")) $("preview").textContent=mergedText();
+};
+$("btnEditSectorIntro").onclick=()=>{
+  const s=state.selectedSector||state.sectorOrder[0]; if(!s) return alert("Add a sector first.");
+  const nv=prompt(`Intro for ${s}:`, state.sectors[s]||""); if(nv===null) return;
+  state.sectors[s]=nv; save();
+};
+$("btnAddSector").onclick=()=>{
+  const raw=prompt("New sector name:"); const name=(raw||"").trim(); if(!name) return;
+  const exists=state.sectorOrder.some(n=>n.toLowerCase()===name.toLowerCase()); if(exists) return alert("Sector exists.");
+  state.sectors[name]=""; state.sectorOrder.push(name);
+  state.sectorOpeners[name]=DEFAULT_OPENER_TEMPLATE;
+  state.selectedSector=name; save(); renderSectors(); renderSections();
+};
+$("btnRenameSector").onclick=()=>{
+  const old=state.selectedSector; if(!old) return alert("Select a sector.");
+  const raw=prompt("Rename sector:",old); const name=(raw||"").trim(); if(!name||name.toLowerCase()===old.toLowerCase()) return;
+  const exists=state.sectorOrder.some(n=>n.toLowerCase()===name.toLowerCase()); if(exists) return alert("A sector with that name exists.");
+  state.sectors[name]=state.sectors[old]; delete state.sectors[old];
+  state.sectorOpeners[name]=state.sectorOpeners[old]||DEFAULT_OPENER_TEMPLATE; delete state.sectorOpeners[old];
+  state.sectorOrder=state.sectorOrder.map(s=>s===old?name:s); state.selectedSector=name; save(); renderSectors(); renderSections();
+};
+$("btnDeleteSector").onclick=()=>{
+  const s=state.selectedSector; if(!s) return;
+  if(!confirm(`Delete sector "${s}"?`)) return;
+  delete state.sectors[s]; delete state.sectorOpeners[s];
+  state.sectorOrder=state.sectorOrder.filter(x=>x!==s); state.selectedSector=state.sectorOrder[0]||"";
+  save(); renderSectors(); renderSections();
+};
+
+/* Contexts */
+$("contextSelect").onchange=e=>{state.context.selected=e.target.value;save();renderContext();if(!$("preview").classList.contains("hidden")) $("preview").textContent=mergedText()};
+
+/* Sections */
+$("btnAddSection").onclick=()=>{const t=(prompt("Section title:")||"").trim();if(!t)return;state.sections.push({id:uid(),title:t,html:""});save();renderSections();};
+
+/* Preview / Copy / Download / Print / Export / Import */
+$("btnPreview").onclick=()=>{const p=$("preview"),s=$("sections");if(p.classList.contains("hidden")){p.textContent=mergedText();p.classList.remove("hidden");s.classList.add("hidden")}else{p.classList.add("hidden");s.classList.remove("hidden")}};
+$("btnCopy").onclick=()=>{navigator.clipboard.writeText(mergedText());alert("Merged script copied.")};
+$("btnDownload").onclick=()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([mergedText()],{type:"text/plain;charset=utf-8"}));a.download="ColdCallScript.txt";a.click()};
+$("btnPrint").onclick=()=>{const w=window.open("");w.document.write("<pre style='font:14px/1.5 system-ui'>"+mergedText().replaceAll("<","&lt;")+"</pre>");w.document.close();w.print()};
+$("btnExport").onclick=()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(state,null,2)],{type:"application/json"}));a.download="ColdCallData_"+new Date().toISOString().split("T")[0]+".json";a.click()};
+$("btnImport").onclick=()=>{const i=document.createElement("input");i.type="file";i.accept="application/json";i.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{
+  const data=JSON.parse(ev.target.result)||{};
+  data.sectors=data.sectors||{}; data.sectorOrder=data.sectorOrder||Object.keys(data.sectors);
+  data.selectedSector=data.selectedSector||data.sectorOrder[0]||"";
+  data.context=data.context||JSON.parse(JSON.stringify(DEFAULT_CONTEXT));
+  data.context.texts=data.context.texts||{}; data.context.order=data.context.order||Object.keys(data.context.texts);
+  Object.keys(data.context.texts).forEach(k=>{if(!data.context.order.includes(k))data.context.order.push(k)});
+  if(!data.context.selected||!data.context.order.includes(data.context.selected)) data.context.selected=data.context.order[0]||"";
+  data.sections=data.sections||JSON.parse(JSON.stringify(DEFAULT_SECTIONS));
+  data.sectorOpeners=data.sectorOpeners||{};
+  state=data; save(); hydrate(); alert("Import successful.");
+}catch{alert("Invalid JSON.")}};r.readAsText(f)};i.click()};
+
+/* Logo fallback */
+(function(){
+  const img=$("logo");
+  const EMBED='data:image/svg+xml;utf8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="220" height="40"><rect rx="6" ry="6" width="220" height="40" fill="${state.accent}"/><text x="12" y="26" font-family="system-ui,Segoe UI,Arial" font-size="18" fill="white" font-weight="700">Sustainable Energy First</text></svg>`);
+  img.onerror=()=>{img.onerror=null;img.src=EMBED};
+})();
+
+/* Boot */
+function hydrate(){initTheme();renderSectors();renderContext();renderSections()}
+hydrate();
+</script>
+</body>
+</html>
